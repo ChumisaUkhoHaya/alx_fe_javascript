@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         quoteDisplay.textContent = `"${selectedQuote.text}" - ${selectedQuote.category}`;
     }
 
-    function addQuote() {
+    function addQuote() {"createAddQuoteForm"
         const text = newQuoteText.value.trim();
         const category = newQuoteCategory.value.trim();
         
