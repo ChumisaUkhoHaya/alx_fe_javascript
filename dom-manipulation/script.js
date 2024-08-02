@@ -31,6 +31,17 @@ document.addEventListener('DOMContentLoaded', () => {
         newQuoteCategory.value = '';
         alert("Quote added successfully!");
     }
+    function displayNewQuote(quote) {
+       const quoteContainer = document.createElement('div');
+       quoteContainer.className = 'quote-container';
+    
+       const quoteText = document.createElement('p');
+       quoteText.textContent = `"${quote.text}" - ${quote.category}`;
+       quoteContainer.appendChild(quoteText);
+    
+       const quoteList = document.getElementById('quoteList');
+       quoteList.appendChild(quoteContainer);
+    }
 
     newQuoteButton.addEventListener('click', showRandomQuote);
     addQuoteButton.addEventListener('click', addQuote);
