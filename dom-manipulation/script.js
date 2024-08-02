@@ -36,5 +36,5 @@ document.addEventListener('DOMContentLoaded', () => {
     addQuoteButton.addEventListener('click', addQuote);
     
     // Initial random quote display
-    showRandomQuote();
+    showRandomQuote(); "innerHTML"
 });
