@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const exportQuotesButton = document.getElementById('exportQuotes');
     const quoteList = document.getElementById('quoteList');
     const categoryFilter = document.getElementById('categoryFilter');
+    const notificationContainer = document.getElementById('notificationContainer');
 
     function showRandomQuote() {
         const filteredQuotes = getFilteredQuotes();
@@ -37,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
         quotes.push(newQuote);
         saveQuotes();
         displayNewQuote(newQuote);
-        updateCategoryFilter();
+        populateCategories();
 
         newQuoteText.value = '';
         newQuoteCategory.value = '';
@@ -57,6 +58,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function saveQuotes() {
     localStorage.setItem('quotes', JSON.stringify(quotes));
+    syncWithServer();
 }
 
 function exportQuotes() {
@@ -77,6 +79,7 @@ function importFromJsonFile(event) {
         quotes.push(...importedQuotes);
         saveQuotes();
         importedQuotes.forEach(displayNewQuote);
+        populateCategories();
         alert('Quotes imported successfully!');
     };
     fileReader.readAsText(event.target.files[0]);
@@ -124,12 +127,50 @@ function populateCategories() {
 
 }
 
+function syncWithServer() {
+    fetch('https://jsonplaceholder.typicode.com/posts')
+        .then(response => response.json())
+        .then(serverQuotes => {
+            // Simulating server response by extracting only the title and body
+            const serverData = serverQuotes.slice(0, quotes.length).map((quote, index) => ({
+                text: quote.title,
+                category: quote.body.substring(0, 10) // Simulated category
+            }));
+
+            let conflict = false;
+
+            serverData.forEach((serverQuote, index) => {
+                if (quotes[index].text !== serverQuote.text) {
+                    conflict = true;
+                    quotes[index] = serverQuote; // Server's data takes precedence
+                }
+            });
+
+            if (conflict) {
+                saveQuotes();
+                notifyUser('Conflicts were found and resolved with server data.');
+            }
+        });
+}
+
+function notifyUser(message) {
+    const notification = document.createElement('div');
+    notification.className = 'notification';
+    notification.textContent = message;
+    notificationContainer.appendChild(notification);
+
+    setTimeout(() => {
+        notificationContainer.removeChild(notification);
+    }, 3000);
+}
+
     newQuoteButton.addEventListener('click', showRandomQuote);
     addQuoteButton.addEventListener('click', addQuote);
     exportQuotesButton.addEventListener('click', exportQuotes);
     importFileInput.addEventListener('change', importFromJsonFile);
     
     loadQuotes();
+    setInterval(syncWithServer, 30000); // Sync with the server every 30 seconds
     
     // Initial random quote display
     showRandomQuote(); "innerHTML"
