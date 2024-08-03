@@ -173,6 +173,9 @@ async function sendQuoteToServer(quote) {
 
 async function syncWithServer() {
     await fetchQuotesFromServer();
+    for (const quote of quotes) {
+        await sendQuoteToServer(quote);
+    }
 }
 function notifyUser(message) {
     const notification = document.createElement('div');
