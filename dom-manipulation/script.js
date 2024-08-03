@@ -24,7 +24,7 @@ document.addEventListener('DOMContentLoaded', () => {
         sessionStorage.setItem('lastViewedQuote', JSON.stringify(selectedQuote));
     }
 
-    function addQuote() {"createAddQuoteForm"
+    async function addQuote() {"createAddQuoteForm"
         const text = newQuoteText.value.trim();
         const category = newQuoteCategory.value.trim();
         
@@ -39,6 +39,9 @@ document.addEventListener('DOMContentLoaded', () => {
         saveQuotes();
         displayNewQuote(newQuote);
         populateCategories();
+
+         // Send the new quote to the server
+         await sendQuoteToServer(newQuote);
 
         newQuoteText.value = '';
         newQuoteCategory.value = '';
