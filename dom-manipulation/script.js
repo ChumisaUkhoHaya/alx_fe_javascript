@@ -13,9 +13,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const importFileInput = document.getElementById('importFile');
     const exportQuotesButton = document.getElementById('exportQuotes');
     const quoteList = document.getElementById('quoteList');
+    const categoryFilter = document.getElementById('categoryFilter');
 
     function showRandomQuote() {
-        const randomIndex = Math.floor(Math.random() * quotes.length);
+        const filteredQuotes = getFilteredQuotes();
+        const randomIndex = Math.floor(Math.random() * filteredquotes.length);
         const selectedQuote = quotes[randomIndex];
         quoteDisplay.textContent = `"${selectedQuote.text}" - ${selectedQuote.category}`;
         sessionStorage.setItem('lastViewedQuote', JSON.stringify(selectedQuote));
@@ -30,7 +32,13 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
+        const newQuote = { text, category };
         quotes.push({ text, category });
+        quotes.push(newQuote);
+        saveQuotes();
+        displayNewQuote(newQuote);
+        updateCategoryFilter();
+
         newQuoteText.value = '';
         newQuoteCategory.value = '';
         alert("Quote added successfully!");
@@ -82,6 +90,38 @@ function loadQuotes() {
     } else {
         showRandomQuote();
     }
+}
+
+function getFilteredQuotes() {
+    const selectedCategory = categoryFilter.value;
+    if (selectedCategory === 'all') {
+        return quotes;
+    }
+    return quotes.filter(quote => quote.category === selectedCategory);
+}
+
+function filterQuotes() {
+    const selectedCategory = categoryFilter.value;
+    localStorage.setItem('selectedCategory', selectedCategory);
+    const filteredQuotes = getFilteredQuotes();
+    quoteList.innerHTML = '';
+    filteredQuotes.forEach(displayNewQuote);
+}
+
+function updateCategoryFilter() {
+    const categories = [...new Set(quotes.map(quote => quote.category))];
+    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+    categories.forEach(category => {
+        const option = document.createElement('option');
+        option.value = category;
+        option.textContent = category;
+        categoryFilter.appendChild(option);
+    });
+
+    const selectedCategory = localStorage.getItem('selectedCategory') || 'all';
+    categoryFilter.value = selectedCategory;
+    filterQuotes();
+
 }
 
     newQuoteButton.addEventListener('click', showRandomQuote);
