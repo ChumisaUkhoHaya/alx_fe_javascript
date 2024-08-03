@@ -174,11 +174,13 @@ async function sendQuoteToServer(quote) {
 }
 
 
-async function syncWithServer() {
+async function syncQuotes() {
     await fetchQuotesFromServer();
     for (const quote of quotes) {
         await sendQuoteToServer(quote);
     }
+
+    notifyUser('Quotes synced with server!');
 }
 function notifyUser(message) {
     const notification = document.createElement('div');
