@@ -41,7 +41,7 @@ document.addEventListener('DOMContentLoaded', () => {
         populateCategories();
 
          // Send the new quote to the server
-         await sendQuoteToServer(newQuote);
+         await syncQuotes(newQuote);
 
         newQuoteText.value = '';
         newQuoteCategory.value = '';
