@@ -127,7 +127,7 @@ function populateCategories() {
 
 }
 
-function syncWithServer() {
+function fetchQuotesFromServer() {
     fetch('https://jsonplaceholder.typicode.com/posts')
         .then(response => response.json())
         .then(serverQuotes => {
@@ -152,6 +152,11 @@ function syncWithServer() {
             }
         });
 }
+
+function syncWithServer() {
+    fetchQuotesFromServer();
+}
+
 
 function notifyUser(message) {
     const notification = document.createElement('div');
