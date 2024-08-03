@@ -126,38 +126,35 @@ function populateCategories() {
     filterQuotes();
 
 }
+async function fetchQuotesFromServer() {
+    try {
+        const response = await fetch('https://jsonplaceholder.typicode.com/posts');
+        const serverQuotes = await response.json();
+        const serverData = serverQuotes.slice(0, quotes.length).map((quote, index) => ({
+            text: quote.title,
+            category: quote.body.substring(0, 10) // Simulated category
+        }));
 
-function fetchQuotesFromServer() {
-    fetch('https://jsonplaceholder.typicode.com/posts')
-        .then(response => response.json())
-        .then(serverQuotes => {
-            // Simulating server response by extracting only the title and body
-            const serverData = serverQuotes.slice(0, quotes.length).map((quote, index) => ({
-                text: quote.title,
-                category: quote.body.substring(0, 10) // Simulated category
-            }));
-
-            let conflict = false;
-
-            serverData.forEach((serverQuote, index) => {
-                if (quotes[index].text !== serverQuote.text) {
-                    conflict = true;
-                    quotes[index] = serverQuote; // Server's data takes precedence
-                }
-            });
-
-            if (conflict) {
-                saveQuotes();
-                notifyUser('Conflicts were found and resolved with server data.');
+        let conflict = false;
+        serverData.forEach((serverQuote, index) => {
+            if (quotes[index].text !== serverQuote.text) {
+                conflict = true;
+                quotes[index] = serverQuote; // Server's data takes precedence
             }
         });
+
+        if (conflict) {
+            saveQuotes();
+            notifyUser('Conflicts were found and resolved with server data.');
+        }
+    } catch (error) {
+        console.error('Failed to fetch quotes from server:', error);
+    }
 }
 
-function syncWithServer() {
-    fetchQuotesFromServer();
+async function syncWithServer() {
+    await fetchQuotesFromServer();
 }
-
-
 function notifyUser(message) {
     const notification = document.createElement('div');
     notification.className = 'notification';
@@ -168,6 +165,7 @@ function notifyUser(message) {
         notificationContainer.removeChild(notification);
     }, 3000);
 }
+
 
     newQuoteButton.addEventListener('click', showRandomQuote);
     addQuoteButton.addEventListener('click', addQuote);
